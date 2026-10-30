@@ -1,0 +1,68 @@
+Partite per combinazione: 100  (3 giocatori, tetto 40 turni)
+
+======================================================================
+ECONOMIA E0_soloPP
+======================================================================
+Strategie mescolate (400 partite):
+  Aviazione   vince  74.7%   (atteso 33.3%)
+  Rusher      vince  28.7%   (atteso 33.3%)
+  Economista  vince  15.3%   (atteso 33.3%)
+  Tartaruga   vince   3.7%   (atteso 33.3%)
+  durata media 36.6 turni | partite bloccate al tetto 84.0%
+  effetto valanga: chi guida al turno 5 vince il 84%
+Specchio (3 bot uguali): durata media / % bloccate al tetto
+  Rusher       38.7 turni   bloccate  92.0% | al tetto il leader ha in media 12.4/20, Madagascar non suo nel 40%
+  Aviazione    32.7 turni   bloccate  67.0% | al tetto il leader ha in media 10.4/20, Madagascar non suo nel 28%
+  Economista   40.0 turni   bloccate 100.0% | al tetto il leader ha in media 7.9/20, Madagascar non suo nel 34%
+  Tartaruga    40.0 turni   bloccate 100.0% | al tetto il leader ha in media 6.5/20, Madagascar non suo nel 20%
+
+======================================================================
+ECONOMIA E1_soldiPP
+======================================================================
+Strategie mescolate (400 partite):
+  Aviazione   vince  78.7%   (atteso 33.3%)
+  Rusher      vince  21.0%   (atteso 33.3%)
+  Economista  vince  16.7%   (atteso 33.3%)
+  Tartaruga   vince   4.7%   (atteso 33.3%)
+  durata media 37.3 turni | partite bloccate al tetto 89.2%
+  effetto valanga: chi guida al turno 5 vince il 86%
+Specchio (3 bot uguali): durata media / % bloccate al tetto
+  Rusher       39.5 turni   bloccate  96.0% | al tetto il leader ha in media 13.4/20, Madagascar non suo nel 49%
+  Aviazione    35.6 turni   bloccate  82.0% | al tetto il leader ha in media 11.4/20, Madagascar non suo nel 23%
+  Economista   40.0 turni   bloccate 100.0% | al tetto il leader ha in media 9.3/20, Madagascar non suo nel 35%
+  Tartaruga    40.0 turni   bloccate 100.0% | al tetto il leader ha in media 7.4/20, Madagascar non suo nel 37%
+
+======================================================================
+ECONOMIA E2_edifici
+======================================================================
+Strategie mescolate (400 partite):
+  Aviazione   vince  86.0%   (atteso 33.3%)
+  Rusher      vince  22.3%   (atteso 33.3%)
+  Economista  vince  19.7%   (atteso 33.3%)
+  Tartaruga   vince   3.3%   (atteso 33.3%)
+  durata media 31.6 turni | partite bloccate al tetto 70.5%
+  effetto valanga: chi guida al turno 5 vince il 86%
+  edifici medi a partita: casette 13.4, fortezze 3.4
+Specchio (3 bot uguali): durata media / % bloccate al tetto
+  Rusher       39.0 turni   bloccate  91.0% | al tetto il leader ha in media 12.5/20, Madagascar non suo nel 56%
+  Aviazione    33.6 turni   bloccate  76.0% | al tetto il leader ha in media 11.7/20, Madagascar non suo nel 28%
+  Economista   40.0 turni   bloccate 100.0% | al tetto il leader ha in media 8.4/20, Madagascar non suo nel 36%
+  Tartaruga    40.0 turni   bloccate 100.0% | al tetto il leader ha in media 6.8/20, Madagascar non suo nel 33%
+
+======================================================================
+ECONOMIA E3_monopoly
+======================================================================
+Strategie mescolate (400 partite):
+  Aviazione   vince  84.7%   (atteso 33.3%)
+  Economista  vince  22.3%   (atteso 33.3%)
+  Rusher      vince  14.3%   (atteso 33.3%)
+  Tartaruga   vince   7.0%   (atteso 33.3%)
+  durata media 32.4 turni | partite bloccate al tetto 72.8%
+  effetto valanga: chi guida al turno 5 vince il 83%
+  edifici medi a partita: casette 12.3, fortezze 0.0
+Specchio (3 bot uguali): durata media / % bloccate al tetto
+  Rusher       39.2 turni   bloccate  91.0% | al tetto il leader ha in media 13.9/20, Madagascar non suo nel 48%
+  Aviazione    30.5 turni   bloccate  62.0% | al tetto il leader ha in media 11.4/20, Madagascar non suo nel 19%
+  Economista   40.0 turni   bloccate 100.0% | al tetto il leader ha in media 9.1/20, Madagascar non suo nel 30%
+  Tartaruga    40.0 turni   bloccate 100.0% | al tetto il leader ha in media 7.6/20, Madagascar non suo nel 30%
+

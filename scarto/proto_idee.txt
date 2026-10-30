@@ -1,0 +1,119 @@
+Estrazione punti — Conversazione su "Risikopoli"
+Il concept di base
+
+Fusione Risiko + Monopoli: i territori non producono più solo eserciti (Risiko) né solo rendita (Monopoli), ma output economico e militare insieme.
+Decisione centrale del gioco: allocazione di risorse scarse tra investimenti che competono (esercito, economia, infrastrutture, tecnologia) → il classico dilemma cannoni vs burro.
+Target di realismo: "più realistico e stratificato" ma con il monito che è la frase che uccide il 90% dei progetti solo-dev. Il realismo serve solo quando crea attrito interessante, non dettaglio fine a sé stesso.
+
+Strati di realismo che valgono la complessità
+
+Logistica: rifornire eserciti lontani costa → trasforma l'espansione in "fin dove proietto potenza?".
+Catene di approvvigionamento (al posto dei "set" di Monopoli): controllare risorse/regioni dà moltiplicatori, creando dipendenze → diplomazia e guerra nascono dalla mappa.
+Legittimità/popolazione: territori occupati resistono, costano, si ribellano → freno anti-snowball naturale (overextension, war exhaustion). Unico caso in cui "più realistico" = "più giocabile".
+
+Modello temporale (turni vs live)
+
+Scelta finale: modello a impulsi (variante WEGO). Il tempo avanza per "pulse"; durante l'impulso si accodano ordini, che si risolvono quando tutti sono pronti o scade un timer. Pressione del live + equità del turno.
+Multiplayer = una sola modalità (a impulsi/simultanea), perché il real-time-con-pausa pone la domanda irrisolvibile "di chi è la pausa?".
+Possibile offrire real-time-con-pausa solo contro IA come stretch goal, perché nasce gratis dallo stesso motore (è un parametro, non una riscrittura).
+
+Architettura ingegneristica (decisioni-chiave prese presto)
+
+Command pattern + simulazione deterministica a timestep fisso: ogni azione è un oggetto-comando in coda; uno step separato risolve la coda. Disaccoppia quando arriva l'input da quando viene risolto.
+Separazione netta sim ↔ rendering: la simulazione non legge mai posizioni di nodi, delta-time o stato visivo. Disciplina che rende il networking "quasi gratis" e le animazioni libere.
+
+L'IA di gioco
+
+Un'IA da gioco non deve essere intelligente, ma competente, battibile, veloce e leggibile. È "ingegneria dell'illusione".
+Architettura a strati: strategico (utility AI), operativo, tattico (behavior tree, solo se serve).
+Tre attrezzi: Utility AI (cervello strategico, perfetto per cannoni-vs-burro), Influence maps (occhi spaziali, si aggancia alla logistica), strategie scriptate come personalità (aggressivo/economico/turtle).
+L'AoE2 è letteralmente uno script di regole if-then prioritizzate → si parte da "venti righe brutte ma funzionanti".
+No reti neurali (giusta l'intuizione): non-deterministiche, scatola nera, non tarabili per il divertimento.
+La difficoltà si regola con manopole (handicap, ritardo reazione, qualità decisioni), non rendendo l'AI più intelligente. Regola d'oro: leggibilità (telegrafare le intenzioni).
+Il modello a impulsi è un regalo per l'IA: un solo ciclo per impulso + riproducibilità da determinismo.
+
+Networking (LAN, host non-dedicato)
+
+Setup scelto: lockstep deterministico — si spediscono i comandi, non lo stato del mondo. È il modello di AoE sui modem del 1997.
+Il PC host fa da smistatore di comandi (non autorità di simulazione): raccoglie ordini, li ordina deterministicamente, li rispedisce; ogni macchina simula per conto suo.
+Trappola = desync. Tre difese:
+
+Matematica a interi/fixed-point (no float nella logica → la più importante).
+Un solo RNG con seme condiviso.
+Checksum dello stato a ogni impulso (allarme antincendio).
+
+
+Godot: usare ENet + RPC come trasporto, ma scrivere a mano lo strato lockstep (il MultiplayerSynchronizer è per server-authoritative, modello sbagliato).
+Sequenza: prima due istanze su 127.0.0.1, poi due PC fisici in LAN.
+
+Determinismo (chiarimenti emersi)
+
+Il "pronto" sincronizza quando si risolve, non come. Il desync nasce dal calcolo, non dalla tempistica.
+"Due scatole, non una": ogni PC fa girare la sua copia; il determinismo garantisce che producano lo stesso mondo.
+Il seme condiviso chiude solo il random, non l'aritmetica → servono anche gli interi.
+Tecnica corretta: sim in interi, frontend mostra la virgola (separazione simulazione/presentazione; soldi in centesimi). Attenzione alla divisione: una volta interi, sempre interi.
+
+Pannello dati
+
+Distinzione chiave: dati azionabili vs dati da vetrina. Filtro: "vedendo questo, faccio una mossa diversa?".
+Tre famiglie utili: tendenze (curve nel tempo, non stati), composizione/colli di bottiglia (dove va la produzione), confronto relativo (io vs avversari).
+Insidia: con nebbia di guerra il pannello non deve diventare onnisciente (i dati sugli altri restano stime/parziali).
+Bonus: è anche il miglior strumento di debug del bilanciamento.
+
+Meccaniche militari
+
+Attacco/difesa asimmetrici (modello Axis & Allies): difensore usa il valore difesa, attaccante quello attacco; fanteria difende meglio, carro attacca meglio. Massima profondità per minima roba.
+Counter system (morra cinese A>B>C>A) = difesa strutturale contro doomstack e God-unit. L'esempio missile-vs-fanteria-sparpagliata è counter leggibile e intelligente.
+Combattimento deterministico: l'azzardo non viene dai dadi ma dall'informazione nascosta (committi le forze prima di vedere quelle altrui → "ho stimato male", colpa tua e leggibile).
+Insidia doomstack: la somma pura premia il mucchio. Contrappesi: terreno, limite logistico, counter tra unità.
+Monito scope ricorrente: partito da 2 unità → fino a aerei/sommergibili/missili/futuristico. Mossa disciplinata: 3 unità (terra, anti-terra, rompi-stallo), bilanciare il triangolo, poi espandere. 6 unità = 15 relazioni da playtestare.
+
+Meccaniche economiche
+
+Affitto su territorio altrui ("ho una fabbrica in casa tua, ti pago"): salva l'anima di Monopoli in versione strategica; crea ostaggi reciproci e dipendenze geografiche.
+Domanda portante: cosa impedisce all'occupante militare di espropriare invece di incassare? Serve un disincentivo (asset danneggiato / costo reputazionale / resa ridotta sotto gestione ostile).
+Catena edificio→unità (fabbrica/caserma/porto civile→militare): tienila, è il cuore — cannoni-vs-burro reso fisico, decisione rada.
+Risorse miniera→unità: sana in principio, pericolosa in granularità. Cura: la miniera produce flusso automatico, la decisione rada è cosa costruisci con lo stock, non cosa fa la miniera ogni turno. Una-due risorse, non cinque.
+Banca/inflazione: elegante ma quasi certamente di troppo → rischio opacità, nemico del target che vuole capire. Sistema da v2.0.
+Principio: ciò che appesantisce non è il numero di sistemi, ma il numero di decisioni per impulso. Sistemi "imposta-e-dimentica" non pesano; allocazioni manuali ogni turno sì.
+
+Logistica (versione leggera)
+
+Bussola dichiarata: "non voglio HOI4" = il tetto contro cui misurare ogni meccanica.
+L'idea che vale: soglia logistica leggibile ("vicino alla caserma non paghi; oltre tot caselle l'unità è isolata e costa"). Dà l'80% della profondità.
+Da tagliare (pesanti, poco azionabili): mantenimento decrescente all'1%/turno (automatismo, decisione zero), sconto navale scalato sui porti, ferrovie → tre sotto-sistemi che ricostruiscono HOI4. La ferrovia è candidata seconda meccanica perché almeno è una scelta.
+
+L'impero vivo (estetica/animazioni)
+
+Frase-cuore: "guarda cosa ho costruito" — l'impero vivo (nave che attraversa, aereo in ricognizione, ciminiera che fuma) è l'anima, non una meccanica → non va tagliata, va protetta.
+Profondità di sistema vs ricchezza di vita: valute diverse. Una meccanica in più costa peso cognitivo al giocatore; un'animazione costa lavoro a te ma zero peso al giocatore.
+Pericolo: l'animazione gratifica subito e permette di evitare la domanda "è divertente?" → impalcatura carina.
+Regola: il loop si prototipa brutto, la vita si aggiunge bella dopo. Animazioni su loop morto = cadavere truccato.
+Buona notizia tecnica: l'impero-vivo è quasi tutto rendering decorativo → il muro sim/rendering ti lascia caricarlo senza rischiare desync.
+
+Ordine di costruzione
+
+Correzione alla pipeline proposta: non partire dal database. Schema progettato ora = rifatto dieci volte.
+Sequenza corretta: 1) loop in memoria, brutto (mappa "1,2,3", stato in RAM) → 2) backend + database → 3) rete lockstep → 4) grafica.
+Traguardo da raggiungere: "oddio che bello sta funzionando con la bruttezza" = il divertimento è nel loop, non nella vernice.
+
+Motivazione (l'arco personale di Matteo)
+
+Movente iniziale dichiarato in parte: rivincita verso i compagni di paese che lo trattavano da "tipo strano".
+Risposta: legittimo da sentire, ma è un ottimo accendino e un pessimo carburante → si esaurisce prima del traguardo, e la validazione esterna non ripara a ritroso. La vera libertà è costruire per il giocatore (che è Matteo stesso).
+Spostamento del movente nel corso della chat: da rivincita → "voglio dire che l'ho fatto io, fatto come dice la coccia mia" = carburante che non finisce.
+Frase-definizione del gioco: "il giocatore deve poter sbagliare" e capire perché (il pannello mostra dove la strategia frana) → rispetta l'intelligenza di chi gioca.
+
+Teoria del design (regole e bilanciamento)
+
+Trappola della diligenza: "prima capire tutte le strategie possibili, poi costruire" = scope infinito + sistema rigido. Le strategie interessanti emergono, non si progettano; le scopri giocando il brutto prototipo.
+Tenere due liste: "il loop" (5 cose da costruire) e "esperimenti per dopo" (tutte le idee belle, al sicuro, una alla volta a playtest).
+Regole che aprono vs regole che chiudono: le meccaniche-che-aprono (fisica del mondo) creano lo spazio delle strategie; le regole-che-chiudono (divieti) servono solo a impedire che una strategia degenere divori le altre. Poche, chirurgiche, dopo, ognuna con un "colpevole" preciso.
+Le 4 meccaniche già decise (attacco/difesa asimmetrici, soglia logistica, edificio→unità, affitto altrui) intrecciate generano già rusher/mercante/turtle senza progettarle.
+Bilanciamento: non "tutte le strategie uguali" (ucciderebbe la scelta), ma bilanciamento situazionale (sasso-carta-forbice su scala strategica): ogni strategia forte in alcune situazioni, debole in altre, nessuna migliore in tutte.
+Chiarimento finale dell'utente (accolto): non bilanciamento delle strategie (chi più chi meno forte, va bene), ma bilanciamento del sistema = il terreno di gioco non deve forzare un'unica via.
+Prova pratica del sistema equo: non deve esistere una sola mossa di apertura sempre giusta. Se ogni partita può cominciare bene in modi diversi, il terreno è neutrale e il giocatore può modulare.
+
+
+Il filo rosso (lo "schema ricorrente" nominato più volte)
+Matteo è un costruttore-di-sistemi che tende a innamorarsi dell'impalcatura e a far esplodere lo scope ("più realistico", "visto che ci siamo", "perché è completo"). Ma frena da solo sempre più spesso ("magari non troppe unità", "quanto appesantisce?", "non voglio HOI4") → è il designer dentro di lui che cresce più forte del collezionista di sistemi. Quella voce che frena è quasi sempre quella che ha ragione, ed è la ragione vera per cui il gioco potrebbe davvero uscire.
