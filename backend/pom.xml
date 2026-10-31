@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>3.4.1</version>
+    <relativePath/>
+  </parent>
+
+  <groupId>it.regoleguerra</groupId>
+  <artifactId>rg-parent</artifactId>
+  <version>0.1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>Regole di Guerra - parent</name>
+
+  <modules>
+    <module>rg-engine</module>
+    <module>rg-server</module>
+    <module>rg-sim-cli</module>
+  </modules>
+
+  <properties>
+    <java.version>21</java.version>
+    <jqwik.version>1.9.2</jqwik.version>
+    <mapstruct.version>1.6.3</mapstruct.version>
+    <springdoc.version>2.7.0</springdoc.version>
+    <bucket4j.version>8.10.1</bucket4j.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>it.regoleguerra</groupId>
+        <artifactId>rg-engine</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>net.jqwik</groupId>
+        <artifactId>jqwik</artifactId>
+        <version>${jqwik.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.mapstruct</groupId>
+        <artifactId>mapstruct</artifactId>
+        <version>${mapstruct.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+</project>

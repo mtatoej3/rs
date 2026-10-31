@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: rg-server
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:54322/postgres}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:postgres}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    enabled: true
+    # Per Flyway sempre connessione diretta (GDD 7.1); se diversa da datasource, impostare FLYWAY_URL.
+    url: ${FLYWAY_URL:${DB_URL:jdbc:postgresql://localhost:54322/postgres}}
+    user: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:postgres}
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # https://<project>.supabase.co/auth/v1 (GDD 7.3)
+          issuer-uri: ${SUPABASE_JWT_ISSUER:http://localhost:54321/auth/v1}
+          jwk-set-uri: ${SUPABASE_JWKS_URI:http://localhost:54321/auth/v1/.well-known/jwks.json}
+
+server:
+  port: ${PORT:8080}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+
+rg:
+  cors-allowed-origins: ${RG_CORS_ORIGINS:http://localhost:5173}

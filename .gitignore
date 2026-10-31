@@ -1,0 +1,18 @@
+# Java / Maven
+target/
+*.class
+# Node
+node_modules/
+dist/
+*.tsbuildinfo
+# Python
+__pycache__/
+# Env e segreti
+.env
+.env.*
+!.env.example
+# IDE / OS
+.idea/
+.vscode/
+*.iml
+.DS_Store

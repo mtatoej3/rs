@@ -1,0 +1,10 @@
+{
+  "code": "test20",
+  "name": "Mappa di test (20 territori)",
+  "version": 1,
+  "territories": [],
+  "adjacency": [],
+  "seas": [],
+  "coasts": [],
+  "_note": "Da compilare a partire da progettazione/mapa_test.jpeg: 4 gruppi (Africa, Europa, Asia, Oceania), confini terrestri, ponti e zone di mare."
+}
