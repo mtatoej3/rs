@@ -1,0 +1,110 @@
+==============================================================================
+VARIANTE A base (regole GDD)
+==============================================================================
+--- E2_edifici  (400 partite mescolate)
+  Aviazione   vince  86.0%  (di cui dominio completo  36.0%)
+  Economista  vince  23.3%  (di cui dominio completo   1.7%)
+  Rusher      vince  18.3%  (di cui dominio completo   0.0%)
+  Tartaruga   vince   2.0%  (di cui dominio completo   0.0%)
+  durata media 31.9 turni | bloccate al tetto 71.8% | valanga (leader al turno 5 vince) 85%
+  partite bloccate: leader medio 14.4/20, Madagascar non suo nel 21%
+  aerei sul totale unità comprate 25% | aeroporti/partita 0.0 | carte anfibie usate/partita 0.0 | casette 13.3 fortezze 3.5
+  specchio, bloccate al tetto: Rusher 92% | Aviazione 80% | Economista 100% | Tartaruga 100%
+--- E3_monopoly  (400 partite mescolate)
+  Aviazione   vince  88.0%  (di cui dominio completo  36.7%)
+  Economista  vince  18.3%  (di cui dominio completo   1.0%)
+  Rusher      vince  16.7%  (di cui dominio completo   0.0%)
+  Tartaruga   vince   6.7%  (di cui dominio completo   0.0%)
+  durata media 31.6 turni | bloccate al tetto 71.8% | valanga (leader al turno 5 vince) 88%
+  partite bloccate: leader medio 14.5/20, Madagascar non suo nel 16%
+  aerei sul totale unità comprate 27% | aeroporti/partita 0.0 | carte anfibie usate/partita 0.0 | casette 12.4 fortezze 0.0
+  specchio, bloccate al tetto: Rusher 89% | Aviazione 62% | Economista 100% | Tartaruga 100%
+
+==============================================================================
+VARIANTE B duello aereo
+==============================================================================
+--- E2_edifici  (400 partite mescolate)
+  Aviazione   vince  88.3%  (di cui dominio completo  44.3%)
+  Economista  vince  24.0%  (di cui dominio completo   0.3%)
+  Rusher      vince  14.7%  (di cui dominio completo   0.0%)
+  Tartaruga   vince   2.7%  (di cui dominio completo   0.0%)
+  durata media 30.2 turni | bloccate al tetto 66.5% | valanga (leader al turno 5 vince) 83%
+  partite bloccate: leader medio 14.4/20, Madagascar non suo nel 20%
+  aerei sul totale unità comprate 25% | aeroporti/partita 0.0 | carte anfibie usate/partita 0.0 | casette 13.6 fortezze 3.6
+  specchio, bloccate al tetto: Rusher 91% | Aviazione 84% | Economista 100% | Tartaruga 100%
+--- E3_monopoly  (400 partite mescolate)
+  Aviazione   vince  84.3%  (di cui dominio completo  33.7%)
+  Economista  vince  18.0%  (di cui dominio completo   1.0%)
+  Rusher      vince  15.0%  (di cui dominio completo   0.0%)
+  Tartaruga   vince  11.3%  (di cui dominio completo   0.0%)
+  durata media 32.4 turni | bloccate al tetto 74.0% | valanga (leader al turno 5 vince) 86%
+  partite bloccate: leader medio 14.0/20, Madagascar non suo nel 19%
+  aerei sul totale unità comprate 26% | aeroporti/partita 0.0 | carte anfibie usate/partita 0.0 | casette 12.3 fortezze 0.0
+  specchio, bloccate al tetto: Rusher 93% | Aviazione 64% | Economista 100% | Tartaruga 100%
+
+==============================================================================
+VARIANTE C aeroporti
+==============================================================================
+--- E2_edifici  (400 partite mescolate)
+  Aviazione   vince  79.3%  (di cui dominio completo  24.3%)
+  Rusher      vince  26.7%  (di cui dominio completo   0.3%)
+  Economista  vince  18.7%  (di cui dominio completo   0.7%)
+  Tartaruga   vince   3.0%  (di cui dominio completo   0.0%)
+  durata media 34.9 turni | bloccate al tetto 81.0% | valanga (leader al turno 5 vince) 85%
+  partite bloccate: leader medio 12.4/20, Madagascar non suo nel 35%
+  aerei sul totale unità comprate 7% | aeroporti/partita 13.4 | carte anfibie usate/partita 0.0 | casette 12.8 fortezze 2.8
+  specchio, bloccate al tetto: Rusher 88% | Aviazione 60% | Economista 100% | Tartaruga 100%
+--- E3_monopoly  (400 partite mescolate)
+  Aviazione   vince  75.3%  (di cui dominio completo  26.3%)
+  Rusher      vince  20.3%  (di cui dominio completo   0.3%)
+  Tartaruga   vince  17.0%  (di cui dominio completo   0.3%)
+  Economista  vince  13.3%  (di cui dominio completo   1.0%)
+  durata media 34.5 turni | bloccate al tetto 79.0% | valanga (leader al turno 5 vince) 86%
+  partite bloccate: leader medio 12.0/20, Madagascar non suo nel 37%
+  aerei sul totale unità comprate 6% | aeroporti/partita 13.2 | carte anfibie usate/partita 0.0 | casette 10.8 fortezze 0.0
+  specchio, bloccate al tetto: Rusher 92% | Aviazione 54% | Economista 100% | Tartaruga 100%
+
+==============================================================================
+VARIANTE D aereo non conquista + carta anfibia
+==============================================================================
+--- E2_edifici  (400 partite mescolate)
+  Aviazione   vince  41.3%  (di cui dominio completo   0.0%)
+  Rusher      vince  37.0%  (di cui dominio completo   0.7%)
+  Economista  vince  34.7%  (di cui dominio completo   0.3%)
+  Tartaruga   vince   3.3%  (di cui dominio completo   0.0%)
+  durata media 39.8 turni | bloccate al tetto 99.2% | valanga (leader al turno 5 vince) 71%
+  partite bloccate: leader medio 10.0/20, Madagascar non suo nel 41%
+  aerei sul totale unità comprate 18% | aeroporti/partita 0.0 | carte anfibie usate/partita 2.1 | casette 13.9 fortezze 3.5
+  specchio, bloccate al tetto: Rusher 95% | Aviazione 100% | Economista 100% | Tartaruga 100%
+--- E3_monopoly  (400 partite mescolate)
+  Rusher      vince  43.7%  (di cui dominio completo   0.3%)
+  Aviazione   vince  33.3%  (di cui dominio completo   0.0%)
+  Economista  vince  27.3%  (di cui dominio completo   0.0%)
+  Tartaruga   vince  11.0%  (di cui dominio completo   0.0%)
+  durata media 40.0 turni | bloccate al tetto 99.8% | valanga (leader al turno 5 vince) 74%
+  partite bloccate: leader medio 9.7/20, Madagascar non suo nel 45%
+  aerei sul totale unità comprate 17% | aeroporti/partita 0.0 | carte anfibie usate/partita 2.1 | casette 12.7 fortezze 0.0
+  specchio, bloccate al tetto: Rusher 99% | Aviazione 100% | Economista 100% | Tartaruga 100%
+
+==============================================================================
+VARIANTE E tutto: duello + aeroporti + D
+==============================================================================
+--- E2_edifici  (400 partite mescolate)
+  Rusher      vince  48.0%  (di cui dominio completo   0.0%)
+  Economista  vince  39.0%  (di cui dominio completo   0.7%)
+  Aviazione   vince  29.3%  (di cui dominio completo   0.0%)
+  Tartaruga   vince   4.3%  (di cui dominio completo   0.0%)
+  durata media 39.9 turni | bloccate al tetto 99.5% | valanga (leader al turno 5 vince) 63%
+  partite bloccate: leader medio 9.9/20, Madagascar non suo nel 48%
+  aerei sul totale unità comprate 4% | aeroporti/partita 10.2 | carte anfibie usate/partita 2.4 | casette 13.1 fortezze 3.1
+  specchio, bloccate al tetto: Rusher 98% | Aviazione 100% | Economista 100% | Tartaruga 100%
+--- E3_monopoly  (400 partite mescolate)
+  Rusher      vince  41.3%  (di cui dominio completo   0.7%)
+  Aviazione   vince  32.7%  (di cui dominio completo   0.0%)
+  Economista  vince  30.7%  (di cui dominio completo   0.0%)
+  Tartaruga   vince  11.7%  (di cui dominio completo   0.3%)
+  durata media 39.9 turni | bloccate al tetto 99.2% | valanga (leader al turno 5 vince) 61%
+  partite bloccate: leader medio 10.0/20, Madagascar non suo nel 49%
+  aerei sul totale unità comprate 4% | aeroporti/partita 10.2 | carte anfibie usate/partita 2.4 | casette 12.1 fortezze 0.0
+  specchio, bloccate al tetto: Rusher 97% | Aviazione 100% | Economista 100% | Tartaruga 100%
+

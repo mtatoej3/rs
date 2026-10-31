@@ -1,0 +1,76 @@
+==============================================================================
+VARIANTE M L + a attaccante primo a parità
+==============================================================================
+--- E2_edifici  (400 partite mescolate)
+  Rusher      vince  47.0%  (di cui vittoria vera prima del tetto  27.3%)
+  Economista  vince  37.3%  (di cui vittoria vera prima del tetto  14.0%)
+  Aviazione   vince  31.3%  (di cui vittoria vera prima del tetto  10.0%)
+  Tartaruga   vince   4.0%  (di cui vittoria vera prima del tetto   0.3%)
+  durata media 31.3 turni | bloccate al tetto 61.2% | valanga (leader al turno 5 vince) 71%
+  partite bloccate: leader medio 9.2/20, Madagascar non suo nel 38%
+  aerei sul totale unità comprate 4% | aeroporti/partita 10.1 | carte anfibie usate/partita 2.2 | casette 13.2 fortezze 3.1
+  carte/partita: missili -3.9 PP, scudi 0.9, superprod +6.4 PP, tregue 2.1, trappole scattate 2.1, magie 5.8, unità eliminate/rubate dalle carte 31.7
+  specchio, bloccate al tetto: Rusher 32% | Aviazione 64% | Economista 100% | Tartaruga 100%
+--- E3_monopoly  (400 partite mescolate)
+  Rusher      vince  41.7%  (di cui vittoria vera prima del tetto  19.0%)
+  Aviazione   vince  35.0%  (di cui vittoria vera prima del tetto  12.3%)
+  Economista  vince  28.7%  (di cui vittoria vera prima del tetto  10.7%)
+  Tartaruga   vince  15.0%  (di cui vittoria vera prima del tetto   3.0%)
+  durata media 32.5 turni | bloccate al tetto 66.2% | valanga (leader al turno 5 vince) 68%
+  partite bloccate: leader medio 9.0/20, Madagascar non suo nel 37%
+  aerei sul totale unità comprate 4% | aeroporti/partita 10.0 | carte anfibie usate/partita 2.1 | casette 12.7 fortezze 0.0
+  carte/partita: missili -3.9 PP, scudi 0.8, superprod +6.2 PP, tregue 2.0, trappole scattate 2.0, magie 5.7, unità eliminate/rubate dalle carte 30.7
+  specchio, bloccate al tetto: Rusher 29% | Aviazione 52% | Economista 94% | Tartaruga 100%
+
+==============================================================================
+VARIANTE N L + a + limite 10 + caserma
+==============================================================================
+--- E2_edifici  (400 partite mescolate)
+  Rusher      vince  86.0%  (di cui vittoria vera prima del tetto  85.7%)
+  Economista  vince  28.7%  (di cui vittoria vera prima del tetto  24.3%)
+  Aviazione   vince  17.3%  (di cui vittoria vera prima del tetto  13.0%)
+  Tartaruga   vince   0.7%  (di cui vittoria vera prima del tetto   0.0%)
+  durata media 14.6 turni | bloccate al tetto 7.8% | valanga (leader al turno 5 vince) 84%
+  partite bloccate: leader medio 10.5/20, Madagascar non suo nel 42%
+  aerei sul totale unità comprate 10% | aeroporti/partita 9.4 | carte anfibie usate/partita 1.5 | casette 12.3 fortezze 2.7
+  carte/partita: missili -3.5 PP, scudi 0.9, superprod +6.7 PP, tregue 2.0, trappole scattate 3.0, magie 6.4, unità eliminate/rubate dalle carte 27.2
+  limite unità: caserme/partita 16.1, unità perse per eccesso 2.9, acquisti bloccati per mancanza di spazio 202.8
+  specchio, bloccate al tetto: Rusher 0% | Aviazione 10% | Economista 70% | Tartaruga 97%
+--- E3_monopoly  (400 partite mescolate)
+  Rusher      vince  83.7%  (di cui vittoria vera prima del tetto  82.7%)
+  Aviazione   vince  21.3%  (di cui vittoria vera prima del tetto  18.7%)
+  Economista  vince  21.0%  (di cui vittoria vera prima del tetto  19.0%)
+  Tartaruga   vince   5.3%  (di cui vittoria vera prima del tetto   2.7%)
+  durata media 15.2 turni | bloccate al tetto 7.8% | valanga (leader al turno 5 vince) 79%
+  partite bloccate: leader medio 10.3/20, Madagascar non suo nel 42%
+  aerei sul totale unità comprate 9% | aeroporti/partita 9.2 | carte anfibie usate/partita 1.5 | casette 11.5 fortezze 0.0
+  carte/partita: missili -3.8 PP, scudi 0.8, superprod +7.0 PP, tregue 1.8, trappole scattate 3.1, magie 6.2, unità eliminate/rubate dalle carte 29.2
+  limite unità: caserme/partita 20.3, unità perse per eccesso 3.6, acquisti bloccati per mancanza di spazio 235.0
+  specchio, bloccate al tetto: Rusher 1% | Aviazione 4% | Economista 62% | Tartaruga 81%
+
+==============================================================================
+VARIANTE O L + a + limite 6 + caserma
+==============================================================================
+--- E2_edifici  (400 partite mescolate)
+  Rusher      vince  94.7%  (di cui vittoria vera prima del tetto  93.7%)
+  Aviazione   vince  20.3%  (di cui vittoria vera prima del tetto  17.0%)
+  Economista  vince  18.0%  (di cui vittoria vera prima del tetto  17.0%)
+  Tartaruga   vince   0.0%  (di cui vittoria vera prima del tetto   0.0%)
+  durata media 11.8 turni | bloccate al tetto 4.2% | valanga (leader al turno 5 vince) 87%
+  partite bloccate: leader medio 10.2/20, Madagascar non suo nel 41%
+  aerei sul totale unità comprate 9% | aeroporti/partita 9.0 | carte anfibie usate/partita 1.0 | casette 10.9 fortezze 2.6
+  carte/partita: missili -3.3 PP, scudi 0.7, superprod +5.7 PP, tregue 1.6, trappole scattate 2.6, magie 5.3, unità eliminate/rubate dalle carte 18.1
+  limite unità: caserme/partita 22.8, unità perse per eccesso 3.6, acquisti bloccati per mancanza di spazio 332.7
+  specchio, bloccate al tetto: Rusher 0% | Aviazione 6% | Economista 72% | Tartaruga 97%
+--- E3_monopoly  (400 partite mescolate)
+  Rusher      vince  89.7%  (di cui vittoria vera prima del tetto  88.0%)
+  Aviazione   vince  25.0%  (di cui vittoria vera prima del tetto  23.3%)
+  Economista  vince  14.0%  (di cui vittoria vera prima del tetto  10.3%)
+  Tartaruga   vince   3.7%  (di cui vittoria vera prima del tetto   1.3%)
+  durata media 13.7 turni | bloccate al tetto 7.8% | valanga (leader al turno 5 vince) 82%
+  partite bloccate: leader medio 10.4/20, Madagascar non suo nel 61%
+  aerei sul totale unità comprate 8% | aeroporti/partita 9.2 | carte anfibie usate/partita 1.2 | casette 10.5 fortezze 0.0
+  carte/partita: missili -3.7 PP, scudi 0.7, superprod +6.2 PP, tregue 1.7, trappole scattate 2.5, magie 6.0, unità eliminate/rubate dalle carte 20.5
+  limite unità: caserme/partita 30.3, unità perse per eccesso 4.6, acquisti bloccati per mancanza di spazio 507.8
+  specchio, bloccate al tetto: Rusher 0% | Aviazione 3% | Economista 74% | Tartaruga 79%
+
