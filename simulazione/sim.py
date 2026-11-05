@@ -2,8 +2,10 @@
 Uso:
   python sim.py [partite_per_combinazione]              -> v1: 4 economie, regole del GDD
   python sim.py varianti [partite_per_combinazione]     -> v2: varianti aerei/anfibio su E2 e E3
+Processi paralleli: tutti i core, oppure la variabile d'ambiente SIM_WORKERS.
+La cache di win_prob resta su disco in wp_cache_<impronta>.pkl e si può cancellare in ogni momento.
 """
-import random, sys, itertools
+import bisect, hashlib, inspect, itertools, multiprocessing, os, pickle, random, sys
 from collections import defaultdict
 
 # ---------------------------------------------------------------- MAPPA
@@ -65,7 +67,10 @@ RULES = dict(duel=False,       # n.3 duello aereo per l'iniziativa
              atk_first=False,  # (a) a parità di aerei lancia per primo l'attaccante
              cap=0,            # limite di unità per territorio (0 = nessun limite)
              barracks=False,   # caserma: +50% del limite nel territorio, per ogni caserma
+             atk_cap=False,    # un'armata che attacca non supera il limite del territorio bersaglio
+             combat="",        # S_dadi_netti: "" a turno | "puri" differenza | "costo" differenza + costo | "simultaneo"
              win="all")        # (c) "all" dominio completo | "groups3" 3 gruppi colore su 4 | "t14" 14 territori su 20
+RULES_DEFAULT = dict(RULES)
 AIRPORT_COST, AIRPORT_CAP = 300, 3
 BARRACKS_COST = 300
 
@@ -96,23 +101,59 @@ STRAT = {
     "Aviazione":  dict(air=0.7,  keep=0.3, ratio=0.55, chain=True,  build=None,     place_def=0.3, max_ap=99, traps=False),
     "Economista": dict(air=0.25, keep=0.6, ratio=0.70, chain=False, build="houses", place_def=0.6, max_ap=2,  traps=True),
     "Tartaruga":  dict(air=0.25, keep=1.0, ratio=0.85, chain=False, build="turtle", place_def=1.0, max_ap=2,  traps=True),
+    # aspetta in difesa e colpisce con quasi tutto i territori nemici rimasti scoperti
+    "Contrattacco": dict(air=0.25, keep=0.7, ratio=0.80, chain=False, build=None,   place_def=0.7, max_ap=2,  traps=True, counter=True),
 }
+BOTS = os.environ.get("SIM_BOTS", ",".join(STRAT)).split(",")  # strategie in gioco
+COUNTER_KEEP = 0.3    # guardia quando c'è un nemico scoperto da colpire
+COUNTER_RATIO = 0.55  # probabilità minima contro un territorio scoperto
 MIN_PLANES = 2
 ECON_BUILD_UNTIL = 6  # l'Economista costruisce fino al turno 6, poi converte tutto
 
 # ---------------------------------------------------------------- DADI / SCONTRI
 P_BOOM = 1 / 3
+ROLL_TABLE_MAX = 500
+def _binomial_cdf(n):
+    q = (1 - P_BOOM) ** n
+    cdf, cum = [], 0.0
+    for k in range(n + 1):
+        cum += q; cdf.append(cum)
+        q *= (n - k) / (k + 1) * P_BOOM / (1 - P_BOOM)
+    cdf[-1] = 1.0  # niente residui di arrotondamento: bisect resta entro n
+    return cdf
+_ROLL_CDF = [_binomial_cdf(n) for n in range(ROLL_TABLE_MAX + 1)]
+
 def roll(n):
-    return random.binomialvariate(n, P_BOOM) if n else 0
+    """numero di Boom su n dadi: tabella delle probabilità, stessa distribuzione di binomialvariate"""
+    if n > ROLL_TABLE_MAX: return random.binomialvariate(n, P_BOOM)
+    return bisect.bisect_left(_ROLL_CDF[n], random.random()) if n else 0
 
 def size(a): return a[0] + a[1]          # army = [carri, aerei]
 def hit(a, h):                          # chi colpisce elimina prima gli aerei
     k = min(h, a[1]); a[1] -= k; h -= k
     a[0] = max(0, a[0] - h)
 
+def net_exchange(att, dfn, amph):
+    """S_dadi_netti: lancio simultaneo. Chi ha più aerei fa +1 Boom; nell'anfibio il +1 va al difensore."""
+    a, d = roll(size(att)), roll(size(dfn))
+    if amph: d += 1
+    elif att[1] > dfn[1]: a += 1
+    elif dfn[1] > att[1]: d += 1
+    mode = RULES["combat"]
+    if mode == "simultaneo":
+        hit(dfn, a); hit(att, d)
+    elif mode == "puri":
+        if a > d: hit(dfn, a - d)
+        else: hit(att, d - a)
+    else:  # costo: il perdente paga la differenza, il vincitore un terzo dei Boom nemici
+        hit(dfn, max(0, a - d) + (a // 3 if d >= a else 0))
+        hit(att, max(0, d - a) + (d // 3 if a >= d else 0))
+
 def exchange(att, dfn, att_first):
     """un giro di lanci a turno (o simultaneo se att_first is None)"""
-    if att_first is None:
+    if RULES["combat"]:
+        net_exchange(att, dfn, att_first is False)
+    elif att_first is None:
         ha, hd = roll(size(att)), roll(size(dfn)); hit(dfn, ha); hit(att, hd)
     elif att_first:
         hit(dfn, roll(size(att)))
@@ -123,6 +164,7 @@ def exchange(att, dfn, att_first):
 
 def initiative(att, dfn, both_attack=False):
     """True = l'attaccante lancia per primo; None = simultaneo (solo attacchi incrociati)"""
+    if RULES["combat"]: return None
     if not RULES["duel"] or att[1] == 0 or dfn[1] == 0:
         if att[1] == dfn[1]: return None if both_attack else RULES["atk_first"]
         return att[1] > dfn[1]
@@ -181,22 +223,47 @@ def card_effect(card, user, enemy):
     if card == "Tradimento":
         user[1] += k; user[0] += h - k
 
-_WP = {}
+WP_SAMPLES = 150
+_WP = {}      # cache di win_prob: chiave -> probabilità
+_WP_NEW = {}  # voci calcolate da questo processo e non ancora salvate
+
 def win_prob(at, ap, dt, dp, dice, amph=False):
-    """probabilità stimata (Monte Carlo, in cache) che l'attaccante conquisti la regione"""
+    """probabilità stimata (Monte Carlo, in cache) che l'attaccante conquisti la regione.
+    Il valore dipende solo dalla chiave: un seme proprio tiene separati i dadi della stima da quelli
+    della partita, così il risultato non cambia con cache piena o vuota né col numero di processi."""
     if RULES["noairconq"] and at == 0: return 0.0
     if dice == 0: return 1.0 if at + ap else 0.0
-    key = (min(at, 40), min(ap, 20), min(dt, 40), min(dp, 20), dice, amph)
+    key = (RULES["noairconq"], RULES["atk_first"], RULES["duel"],
+           min(at, 40), min(ap, 20), min(dt, 40), min(dp, 20), dice, amph) + ((RULES["combat"],) if RULES["combat"] else ())
     if key not in _WP:
+        game_state = random.getstate()
+        random.seed(repr(key))
         w = 0
-        for _ in range(150):
-            a, d = [key[0], key[1]], [key[2], key[3]]
+        for _ in range(WP_SAMPLES):
+            a, d = [key[3], key[4]], [key[5], key[6]]
             step1_1v1(a, d, amph)
             if size(d) == 0:
                 while can_take(a):
                     if flag_exchange(a, dice, amph): w += 1; break
-        _WP[key] = w / 150
+        random.setstate(game_state)
+        _WP[key] = _WP_NEW[key] = w / WP_SAMPLES
     return _WP[key]
+
+def _cache_path():
+    """il nome contiene un'impronta della logica di combattimento: se cambia, la vecchia cache non si usa"""
+    funcs = (hit, exchange, initiative, step1_1v1, can_take, hit_by_flag, flag_exchange, win_prob)
+    src = "".join(inspect.getsource(f) for f in funcs) + repr((P_BOOM, WP_SAMPLES))
+    name = "wp_cache_" + hashlib.sha1(src.encode()).hexdigest()[:12] + ".pkl"
+    return os.path.join(os.path.dirname(os.path.abspath(__file__)), name)
+
+def load_cache():
+    if os.path.exists(_cache_path()):
+        with open(_cache_path(), "rb") as f: _WP.update(pickle.load(f))
+
+def save_cache():
+    tmp = _cache_path() + f".{os.getpid()}.tmp"
+    with open(tmp, "wb") as f: pickle.dump(_WP, f, protocol=pickle.HIGHEST_PROTOCOL)
+    os.replace(tmp, _cache_path())
 
 # ---------------------------------------------------------------- GIOCO
 class Game:
@@ -225,6 +292,8 @@ class Game:
         self.hand = [[] for _ in range(self.n)]
         self.traps = {}          # territorio -> carta (del proprietario del territorio)
         self.truce = set()       # coppie (p, q) in tregua per la Fase 3 in corso
+        self.last_conq = {}      # territorio -> turno dell'ultima conquista
+        self.prev_sizes = {}     # unità per territorio all'inizio della Fase 3 precedente
 
     # ---------- Fase 1
     def phase1(self):
@@ -235,7 +304,7 @@ class Game:
         for p in range(self.n):  # ogni bot sceglie un blocco compatto a partire da un seme casuale
             seed = random.choice(sel); chosen = [seed]
             while len(chosen) < k:
-                fr = [n for c in chosen for n in LAND[c] if n in sel and n not in chosen]
+                fr = [n for c in chosen for n in sorted(LAND[c]) if n in sel and n not in chosen]
                 chosen.append(random.choice(fr) if fr and random.random() < 0.85
                               else random.choice([t for t in sel if t not in chosen]))
             picks.append(set(chosen))
@@ -368,9 +437,9 @@ class Game:
             if "Tregua" not in self.hand[p] or not mine: continue
             press = defaultdict(int)  # quanto ogni avversario preme sul mio fronte
             for t in self.frontier(p):
-                for n in LAND[t]:
+                for n in sorted(LAND[t]):
                     if self.owner[n] not in (p, None): press[self.owner[n]] += self.units[n][0]
-                for n in AIR[t]:
+                for n in sorted(AIR[t]):
                     if self.owner[n] not in (p, None): press[self.owner[n]] += self.units[n][1]
             if not press: continue
             q = max(press, key=press.get)
@@ -466,20 +535,30 @@ class Game:
             self.units[tgt][0] += u[0]; self.units[tgt][1] += u[1]
 
     # ---------- Fase 3: ordini
+    def exposed(self, t, p):
+        """territorio nemico scoperto: appena conquistato oppure svuotato rispetto al turno prima"""
+        if self.owner[t] in (p, None): return False
+        recent = self.last_conq.get(t, -9) >= self.turn - 1
+        before = self.prev_sizes.get(t, 0)
+        return recent or (before >= 4 and size(self.units[t]) <= before / 2)
+
     def orders(self, p):
         S = STRAT[self.strat[p]]
+        counter = S.get("counter", False)
         mine = self.owned(p)
+        hit_list = {e for t in mine for e in LAND[t] | AIR[t] if self.exposed(e, p)} if counter else set()
+        keep = COUNTER_KEEP if hit_list else S["keep"]
         avail = {}
         for t in mine:
-            g = int(S["keep"] * self.threat(t, p) + 0.5)
+            g = int(keep * self.threat(t, p) + 0.5)
             a = self.units[t][:]
             k = min(a[0], g); a[0] -= k; g -= k
             a[1] -= min(a[1], g)
             avail[t] = a
         orders, targeted = [], set()
         peace = lambda e: (p, self.owner[e]) in self.truce
-        targets = sorted({e for t in mine for e in LAND[t] | AIR[t] if self.owner[e] != p and not peace(e)},
-                         key=self.def_eq)
+        targets = sorted(sorted({e for t in mine for e in LAND[t] | AIR[t] if self.owner[e] != p and not peace(e)}),
+                         key=lambda e: (e not in hit_list, self.def_eq(e)))
         magic = [c for c in self.hand[p] if c in COMBAT_CARDS]
         for tg in targets:
             d = self.units[tg]
@@ -488,12 +567,18 @@ class Game:
             if card:  # con la carta in mano il bot stima i difensori ridotti di un terzo
                 d = [d[0] - round(d[0] / 3), d[1] - round(d[1] / 3)]
             if tg in self.traps: d = self.units[tg][:]  # una trappola nemica è possibile: prudenza
-            ok = lambda at, ap: win_prob(at, ap, d[0], d[1], dice) >= S["ratio"]
+            ratio = COUNTER_RATIO if tg in hit_list else S["ratio"]
+            ok = lambda at, ap: win_prob(at, ap, d[0], d[1], dice) >= ratio
             srcs = [s for s in mine if tg in LAND[s] or tg in AIR[s]]
             parts, tot = [], [0, 0]
+            lim = self.cap(tg) if RULES["atk_cap"] else 10 ** 9
             for s in sorted(srcs, key=lambda s: -size(avail[s])):
                 a = avail[s]
                 take = [a[0] if tg in LAND[s] else 0, a[1]]
+                spare = lim - size(tot)
+                if spare <= 0: break
+                if size(take) > spare:  # prima i carri: senza carri non si conquista
+                    t0 = min(take[0], spare); take = [t0, min(take[1], spare - t0)]
                 if size(take) == 0: continue
                 parts.append((s, take)); tot[0] += take[0]; tot[1] += take[1]
                 if ok(*tot): break
@@ -506,9 +591,9 @@ class Game:
                 for s, take in parts:
                     avail[s][0] -= take[0]; avail[s][1] -= take[1]
                 chain = []
-                if S["chain"]:
+                if S["chain"] or tg in hit_list:
                     surplus = got - self.def_eq(tg) * 1.3
-                    nxt = sorted([n for n in LAND[tg] if self.owner[n] != p and n not in targeted and n != tg], key=self.def_eq)
+                    nxt = sorted([n for n in sorted(LAND[tg]) if self.owner[n] != p and n not in targeted and n != tg], key=self.def_eq)
                     if nxt and surplus >= 1.3 * self.def_eq(nxt[0]) + 1:
                         chain = [nxt[0]]; targeted.add(nxt[0])
                 if card: magic.remove(card)
@@ -523,7 +608,7 @@ class Game:
                 srcs = [s for s in mine if tg in SEAREACH[s] and tg not in LAND[s] and avail[s][0]]
                 if not srcs: continue
                 s = max(srcs, key=lambda s: avail[s][0])
-                at = avail[s][0]
+                at = min(avail[s][0], self.cap(tg)) if RULES["atk_cap"] else avail[s][0]
                 d = self.units[tg]
                 pr = win_prob(at, 0, d[0], d[1], self.flag_dice(tg), amph=True)
                 if pr >= S["ratio"]:
@@ -542,7 +627,7 @@ class Game:
         incoming = defaultdict(int)
         for t in mine:
             if t in front or size(avail[t]) == 0: continue
-            dst = [n for n in LAND[t] if self.owner[n] == p]
+            dst = [n for n in sorted(LAND[t]) if self.owner[n] == p]
             if dst:
                 d = min(dst, key=lambda n: 0 if n in front else 1)
                 r = self.room(d) - incoming[d]
@@ -566,7 +651,7 @@ class Game:
             while p is not None and self.room(t) < 0:
                 u = [1, 0] if self.units[t][0] else [0, 1]
                 self.units[t][0] -= u[0]; self.units[t][1] -= u[1]
-                near = [n for n in (LAND[t] if u[0] else AIR[t]) if self.owner[n] == p and self.room(n) > 0]
+                near = [n for n in sorted(LAND[t] if u[0] else AIR[t]) if self.owner[n] == p and self.room(n) > 0]
                 if near:
                     n = max(near, key=lambda n: self.room(n))
                     self.units[n][0] += u[0]; self.units[n][1] += u[1]
@@ -575,9 +660,11 @@ class Game:
 
     def _movement(self):
         all_orders, all_moves = [], []
+        sizes_now = {t: size(self.units[t]) for t in T}
         for p in range(self.n):
             if self.owned(p):
                 o, m = self.orders(p); all_orders += o; all_moves += m
+        self.prev_sizes = sizes_now
         # le unità partono
         for o in all_orders:
             for s, a in o["parts"]:
@@ -625,12 +712,15 @@ class Game:
                     a = g["army"]
                     if size(a) and p != self.owner[tg]:
                         # sopravvissuti che non hanno potuto conquistare (aerei senza carri): rientrano
-                        home = [s for s in g["srcs"] if self.owner[s] == p]
+                        home = [s for s in sorted(g["srcs"]) if self.owner[s] == p]
                         if home: self.units[home[0]][0] += a[0]; self.units[home[0]][1] += a[1]
                         a[0] = a[1] = 0
                     if p == winner and g["conts"] and size(self.units[tg]) > 1:
                         a = self.units[tg]
                         go = [a[0] - 1 if a[0] else 0, a[1] if a[0] else a[1] - 1]
+                        if RULES["atk_cap"]:
+                            lim = self.cap(g["conts"][0])
+                            go[0] = min(go[0], lim); go[1] = min(go[1], lim - go[0])
                         a[0] -= go[0]; a[1] -= go[1]
                         nxt.append(dict(p=p, army=go, steps=[g["conts"][0]], srcs={tg}, i=0, amph=False))
             live = nxt; wave += 1
@@ -644,7 +734,7 @@ class Game:
             before = size(a); card_effect(c, dfn, a)
             self.stats["trap_fired"] += 1; self.stats["card_kills"] += before - size(a); used.add(own)
         for p, a in act:
-            for s in info.get(p, {}).get("srcs", ()):
+            for s in sorted(info.get(p, {}).get("srcs", ())):
                 if s in self.traps and self.owner[s] == p and p not in used:
                     c = self.traps.pop(s); self.discard.append(c)
                     before = size(dfn); card_effect(c, a, dfn)
@@ -662,11 +752,11 @@ class Game:
         """step 1 con le carte magia: chi ha l'iniziativa lancia per primo, la carta precede il lancio"""
         first = False if amph else initiative(att, dfn)
         sides = [(p, att, dfn, reserved), (own, dfn, att, None)]
-        if not first: sides.reverse()
+        if first is False: sides.reverse()
         for q, me, en, res in sides:
             if not (size(att) and size(dfn)): break
             self.play_magic(q, me, en, used, res)
-            if size(me) and size(en): hit(en, roll(size(me)))
+            if size(me) and size(en) and not RULES["combat"]: hit(en, roll(size(me)))
         while size(att) and size(dfn):
             exchange(att, dfn, first)
 
@@ -724,6 +814,7 @@ class Game:
 
     def conquer(self, tg, p, a):
         self.owner[tg] = p
+        self.last_conq[tg] = self.turn
         self.units[tg] = [a[0], a[1]]
         a[0] = a[1] = 0
         if self.houses[tg]: self.houses[tg] -= 1  # saccheggio; fortezza e aeroporto passano al conquistatore
@@ -759,25 +850,62 @@ class Game:
         return dict(winner=w, turns=self.max_turns, timeout=True, leader5=leader5, lead=m, mad=mad, **self.stats)
 
 # ---------------------------------------------------------------- ESPERIMENTI
+WORKERS = int(os.environ.get("SIM_WORKERS", os.cpu_count() or 1))
+
+def _worker_init(rules):
+    RULES.update(rules)
+    load_cache()
+
+def _play_chunk(tasks):
+    """gioca un blocco di partite; ognuna ha un proprio seme, quindi il risultato non dipende dai processi"""
+    out = []
+    for en, seats, seed in tasks:
+        random.seed(seed)
+        seats = list(seats); random.shuffle(seats)
+        out.append((seats, Game(seats, en).play()))
+    new = dict(_WP_NEW); _WP_NEW.clear()
+    return out, new
+
 def batch(en, N):
     """partite mescolate (4 combinazioni di 3 strategie) + specchio"""
-    names = list(STRAT)
+    names = BOTS
+    combos = list(itertools.combinations(names, 3))
+    mixed = [(en, c, f"{en}|{c}|{i}") for c in combos for i in range(N)]
+    mirrors = [(en, (s,) * 3, f"{en}|{s}|{i}") for s in names for i in range(N)]
+    tasks = mixed + mirrors
+    size_ = max(1, len(tasks) // (WORKERS * 8))
+    chunks = [tasks[i:i + size_] for i in range(0, len(tasks), size_)]
+    if WORKERS > 1:
+        with multiprocessing.Pool(WORKERS, _worker_init, (dict(RULES),)) as pool:
+            parts = pool.map(_play_chunk, chunks, chunksize=1)
+    else:
+        parts = [_play_chunk(c) for c in chunks]
+    played_games = []
+    for out, new in parts:
+        played_games += out
+        _WP.update(new)
+    _WP_NEW.clear()
+    save_cache()
     wins = defaultdict(int); played = defaultdict(int); real = defaultdict(int)
-    rs_all = []
-    for combo in itertools.combinations(names, 3):
-        for _ in range(N):
-            seats = list(combo); random.shuffle(seats)
-            r = Game(seats, en).play()
-            for s in seats: played[s] += 1
-            if r["winner"] is not None:
-                wins[seats[r["winner"]]] += 1
-                if not r["timeout"]: real[seats[r["winner"]]] += 1
-            rs_all.append(r)
-    mirror = {s: [Game([s] * 3, en).play() for _ in range(N)] for s in names}
-    return dict(wins=wins, played=played, real=real, rs=rs_all, mirror=mirror)
+    rs_all = []; mirror = {s: [] for s in names}
+    together = defaultdict(lambda: [0, 0])  # (s, o) -> [partite con s e o insieme, vinte da s]
+    for seats, r in played_games:
+        if len(set(seats)) == 1:
+            mirror[seats[0]].append(r); continue
+        for s in seats:
+            played[s] += 1
+            for o in names:
+                if o != s and o in seats:
+                    together[s, o][0] += 1
+                    together[s, o][1] += r["winner"] is not None and seats[r["winner"]] == s
+        if r["winner"] is not None:
+            wins[seats[r["winner"]]] += 1
+            if not r["timeout"]: real[seats[r["winner"]]] += 1
+        rs_all.append(r)
+    return dict(wins=wins, played=played, real=real, rs=rs_all, mirror=mirror, together=together)
 
 def report(B, label):
-    names = list(STRAT)
+    names = BOTS
     rs = B["rs"]; G = len(rs)
     to = [r for r in rs if r["timeout"]]
     snow = [r for r in rs if r["leader5"] is not None and r["winner"] is not None]
@@ -809,6 +937,16 @@ def report(B, label):
         m = B["mirror"][s]
         line.append(f"{s} {100 * sum(r['timeout'] for r in m) / len(m):.0f}%")
     print("  specchio, bloccate al tetto: " + " | ".join(line))
+    if "Contrattacco" in names:
+        print("  vince quando il Contrattacco è in partita, contro quando non c'è:")
+        for s in names:
+            if s == "Contrattacco": continue
+            games, won = B["together"][s, "Contrattacco"]
+            others, other_won = B["played"][s] - games, B["wins"][s] - won
+            print(f"    {s:11s} {100 * won / max(1, games):5.1f}% con  | {100 * other_won / max(1, others):5.1f}% senza")
+        g, w = B["together"]["Rusher", "Contrattacco"]
+        print(f"  partite con Rusher e Contrattacco insieme ({g}): Rusher {100 * w / max(1, g):.1f}%,"
+              f" Contrattacco {100 * B['together']['Contrattacco', 'Rusher'][1] / max(1, g):.1f}%")
 
 def run_v1(N):
     print(f"Partite per combinazione: {N}  (3 giocatori, tetto 40 turni)\n")
@@ -834,20 +972,25 @@ VARIANTS = [
     ("O L + a + limite 6 + caserma",              dict(duel=True, airport=True, noairconq=True, amphib=True, cards=True, flag1=True, win="t14", deck2=True, atk_first=True, cap=6, barracks=True)),
     ("P L + a + limite 15 + caserma",              dict(duel=True, airport=True, noairconq=True, amphib=True, cards=True, flag1=True, win="t14", deck2=True, atk_first=True, cap=15, barracks=True)),
     ("Q L + a + limite 20 + caserma",              dict(duel=True, airport=True, noairconq=True, amphib=True, cards=True, flag1=True, win="t14", deck2=True, atk_first=True, cap=20, barracks=True)),
+    ("R L + a + limite 25 + caserma",              dict(duel=True, airport=True, noairconq=True, amphib=True, cards=True, flag1=True, win="t14", deck2=True, atk_first=True, cap=25, barracks=True)),
+    ("S L + a + limite 30 + caserma",              dict(duel=True, airport=True, noairconq=True, amphib=True, cards=True, flag1=True, win="t14", deck2=True, atk_first=True, cap=30, barracks=True)),
+    ("T Q + limite anche sugli attacchi",          dict(duel=True, airport=True, noairconq=True, amphib=True, cards=True, flag1=True, win="t14", deck2=True, atk_first=True, cap=20, barracks=True, atk_cap=True)),
+    ("S_dadi_netti_puri S + vince la differenza dei Boom",     dict(duel=True, airport=True, noairconq=True, amphib=True, cards=True, flag1=True, win="t14", deck2=True, atk_first=True, cap=30, barracks=True, combat="puri")),
+    ("S_dadi_netti_costo S + differenza con costo al vincitore", dict(duel=True, airport=True, noairconq=True, amphib=True, cards=True, flag1=True, win="t14", deck2=True, atk_first=True, cap=30, barracks=True, combat="costo")),
+    ("S_dadi_netti_simultaneo S + lancio simultaneo classico",  dict(duel=True, airport=True, noairconq=True, amphib=True, cards=True, flag1=True, win="t14", deck2=True, atk_first=True, cap=30, barracks=True, combat="simultaneo")),
 ]
 
 def run_v2(N, only=None):
     for name, rules in VARIANTS:
-        if only and not name.startswith(only): continue
-        for k in RULES: RULES[k] = rules.get(k, False)
-        _WP.clear()
+        if only and name.split()[0] != only: continue
+        RULES.update(RULES_DEFAULT); RULES.update(rules)
         print("=" * 78); print(f"VARIANTE {name}"); print("=" * 78)
         for en in ["E2_edifici", "E3_monopoly"]:
             report(batch(en, N), en)
         print(flush=True)
 
 if __name__ == "__main__":
-    random.seed(1)
+    load_cache()
     if len(sys.argv) > 1 and sys.argv[1] == "varianti":
         N = int(sys.argv[2]) if len(sys.argv) > 2 else 100
         run_v2(N, sys.argv[3] if len(sys.argv) > 3 else None)

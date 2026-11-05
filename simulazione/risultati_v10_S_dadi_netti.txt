@@ -1,0 +1,120 @@
+==============================================================================
+VARIANTE S_dadi_netti_puri S + vince la differenza dei Boom
+==============================================================================
+--- E2_edifici  (1000 partite mescolate)
+  Rusher      vince  56.0%  (di cui vittoria vera prima del tetto  53.5%)
+  Economista  vince  50.8%  (di cui vittoria vera prima del tetto  39.2%)
+  Contrattacco vince  34.8%  (di cui vittoria vera prima del tetto  24.5%)
+  Aviazione   vince  20.3%  (di cui vittoria vera prima del tetto  16.5%)
+  Tartaruga   vince   2.0%  (di cui vittoria vera prima del tetto   0.5%)
+  durata media 22.2 turni | bloccate al tetto 19.5% | valanga (leader al turno 5 vince) 63%
+  partite bloccate: leader medio 10.6/20, Madagascar non suo nel 50%
+  aerei sul totale unità comprate 7% | aeroporti/partita 9.6 | carte anfibie usate/partita 2.4 | casette 10.5 fortezze 2.4
+  carte/partita: missili -4.2 PP, scudi 1.0, superprod +7.3 PP, tregue 2.2, trappole scattate 4.3, magie 5.6, unità eliminate/rubate dalle carte 49.1
+  limite unità: caserme/partita 6.0, unità perse per eccesso 4.3, acquisti bloccati per mancanza di spazio 109.1
+  specchio, bloccate al tetto: Rusher 1% | Aviazione 9% | Economista 89% | Tartaruga 99% | Contrattacco 64%
+  vince quando il Contrattacco è in partita, contro quando non c'è:
+    Rusher       48.7% con  |  63.3% senza
+    Aviazione    22.0% con  |  18.7% senza
+    Economista   53.0% con  |  48.7% senza
+    Tartaruga     2.0% con  |   2.0% senza
+  partite con Rusher e Contrattacco insieme (300): Rusher 48.7%, Contrattacco 36.3%
+--- E3_monopoly  (1000 partite mescolate)
+  Rusher      vince  55.2%  (di cui vittoria vera prima del tetto  52.3%)
+  Economista  vince  37.5%  (di cui vittoria vera prima del tetto  26.2%)
+  Contrattacco vince  32.7%  (di cui vittoria vera prima del tetto  21.5%)
+  Aviazione   vince  32.0%  (di cui vittoria vera prima del tetto  24.7%)
+  Tartaruga   vince   4.7%  (di cui vittoria vera prima del tetto   0.8%)
+  durata media 23.3 turni | bloccate al tetto 24.7% | valanga (leader al turno 5 vince) 67%
+  partite bloccate: leader medio 10.5/20, Madagascar non suo nel 46%
+  aerei sul totale unità comprate 7% | aeroporti/partita 9.8 | carte anfibie usate/partita 2.3 | casette 9.8 fortezze 0.0
+  carte/partita: missili -4.2 PP, scudi 1.0, superprod +7.4 PP, tregue 2.2, trappole scattate 4.2, magie 5.7, unità eliminate/rubate dalle carte 50.1
+  limite unità: caserme/partita 7.4, unità perse per eccesso 4.5, acquisti bloccati per mancanza di spazio 154.2
+  specchio, bloccate al tetto: Rusher 0% | Aviazione 10% | Economista 85% | Tartaruga 91% | Contrattacco 51%
+  vince quando il Contrattacco è in partita, contro quando non c'è:
+    Rusher       49.0% con  |  61.3% senza
+    Aviazione    35.3% con  |  28.7% senza
+    Economista   38.3% con  |  36.7% senza
+    Tartaruga     5.0% con  |   4.3% senza
+  partite con Rusher e Contrattacco insieme (300): Rusher 49.0%, Contrattacco 33.0%
+
+==============================================================================
+VARIANTE S_dadi_netti_costo S + differenza con costo al vincitore
+==============================================================================
+--- E2_edifici  (1000 partite mescolate)
+  Rusher      vince  55.3%  (di cui vittoria vera prima del tetto  53.3%)
+  Economista  vince  49.0%  (di cui vittoria vera prima del tetto  40.3%)
+  Contrattacco vince  34.8%  (di cui vittoria vera prima del tetto  25.0%)
+  Aviazione   vince  21.8%  (di cui vittoria vera prima del tetto  16.7%)
+  Tartaruga   vince   2.0%  (di cui vittoria vera prima del tetto   0.5%)
+  durata media 22.3 turni | bloccate al tetto 18.5% | valanga (leader al turno 5 vince) 66%
+  partite bloccate: leader medio 10.5/20, Madagascar non suo nel 51%
+  aerei sul totale unità comprate 8% | aeroporti/partita 9.5 | carte anfibie usate/partita 2.4 | casette 10.5 fortezze 2.3
+  carte/partita: missili -4.2 PP, scudi 1.0, superprod +7.3 PP, tregue 2.2, trappole scattate 4.4, magie 5.6, unità eliminate/rubate dalle carte 48.8
+  limite unità: caserme/partita 5.1, unità perse per eccesso 2.3, acquisti bloccati per mancanza di spazio 99.0
+  specchio, bloccate al tetto: Rusher 2% | Aviazione 9% | Economista 89% | Tartaruga 99% | Contrattacco 57%
+  vince quando il Contrattacco è in partita, contro quando non c'è:
+    Rusher       48.0% con  |  62.7% senza
+    Aviazione    23.7% con  |  20.0% senza
+    Economista   51.0% con  |  47.0% senza
+    Tartaruga     2.0% con  |   2.0% senza
+  partite con Rusher e Contrattacco insieme (300): Rusher 48.0%, Contrattacco 36.7%
+--- E3_monopoly  (1000 partite mescolate)
+  Rusher      vince  52.0%  (di cui vittoria vera prima del tetto  49.7%)
+  Economista  vince  39.3%  (di cui vittoria vera prima del tetto  29.2%)
+  Contrattacco vince  34.3%  (di cui vittoria vera prima del tetto  22.8%)
+  Aviazione   vince  32.0%  (di cui vittoria vera prima del tetto  24.5%)
+  Tartaruga   vince   6.2%  (di cui vittoria vera prima del tetto   2.0%)
+  durata media 23.1 turni | bloccate al tetto 23.1% | valanga (leader al turno 5 vince) 66%
+  partite bloccate: leader medio 10.6/20, Madagascar non suo nel 49%
+  aerei sul totale unità comprate 7% | aeroporti/partita 9.7 | carte anfibie usate/partita 2.3 | casette 9.8 fortezze 0.0
+  carte/partita: missili -4.1 PP, scudi 0.9, superprod +7.2 PP, tregue 2.1, trappole scattate 4.1, magie 5.6, unità eliminate/rubate dalle carte 48.4
+  limite unità: caserme/partita 6.8, unità perse per eccesso 2.3, acquisti bloccati per mancanza di spazio 140.8
+  specchio, bloccate al tetto: Rusher 0% | Aviazione 13% | Economista 79% | Tartaruga 94% | Contrattacco 59%
+  vince quando il Contrattacco è in partita, contro quando non c'è:
+    Rusher       42.0% con  |  62.0% senza
+    Aviazione    36.7% con  |  27.3% senza
+    Economista   42.7% con  |  36.0% senza
+    Tartaruga     5.7% con  |   6.7% senza
+  partite con Rusher e Contrattacco insieme (300): Rusher 42.0%, Contrattacco 35.3%
+
+==============================================================================
+VARIANTE S_dadi_netti_simultaneo S + lancio simultaneo classico
+==============================================================================
+--- E2_edifici  (1000 partite mescolate)
+  Economista  vince  56.5%  (di cui vittoria vera prima del tetto  44.0%)
+  Rusher      vince  55.8%  (di cui vittoria vera prima del tetto  54.3%)
+  Contrattacco vince  34.2%  (di cui vittoria vera prima del tetto  23.3%)
+  Aviazione   vince  16.5%  (di cui vittoria vera prima del tetto  11.8%)
+  Tartaruga   vince   1.7%  (di cui vittoria vera prima del tetto   0.3%)
+  durata media 23.2 turni | bloccate al tetto 19.7% | valanga (leader al turno 5 vince) 63%
+  partite bloccate: leader medio 10.8/20, Madagascar non suo nel 54%
+  aerei sul totale unità comprate 8% | aeroporti/partita 9.3 | carte anfibie usate/partita 2.5 | casette 10.5 fortezze 2.5
+  carte/partita: missili -4.3 PP, scudi 1.1, superprod +7.8 PP, tregue 2.3, trappole scattate 4.6, magie 5.7, unità eliminate/rubate dalle carte 46.6
+  limite unità: caserme/partita 4.8, unità perse per eccesso 1.0, acquisti bloccati per mancanza di spazio 103.6
+  specchio, bloccate al tetto: Rusher 0% | Aviazione 10% | Economista 92% | Tartaruga 99% | Contrattacco 56%
+  vince quando il Contrattacco è in partita, contro quando non c'è:
+    Rusher       47.7% con  |  64.0% senza
+    Aviazione    19.7% con  |  13.3% senza
+    Economista   60.0% con  |  53.0% senza
+    Tartaruga     1.3% con  |   2.0% senza
+  partite con Rusher e Contrattacco insieme (300): Rusher 47.7%, Contrattacco 36.0%
+--- E3_monopoly  (1000 partite mescolate)
+  Rusher      vince  56.5%  (di cui vittoria vera prima del tetto  53.3%)
+  Economista  vince  40.8%  (di cui vittoria vera prima del tetto  31.0%)
+  Contrattacco vince  32.7%  (di cui vittoria vera prima del tetto  20.5%)
+  Aviazione   vince  24.5%  (di cui vittoria vera prima del tetto  18.8%)
+  Tartaruga   vince   7.3%  (di cui vittoria vera prima del tetto   2.5%)
+  durata media 23.8 turni | bloccate al tetto 24.3% | valanga (leader al turno 5 vince) 65%
+  partite bloccate: leader medio 10.4/20, Madagascar non suo nel 44%
+  aerei sul totale unità comprate 8% | aeroporti/partita 9.4 | carte anfibie usate/partita 2.4 | casette 9.9 fortezze 0.0
+  carte/partita: missili -4.3 PP, scudi 1.0, superprod +7.4 PP, tregue 2.2, trappole scattate 4.4, magie 5.8, unità eliminate/rubate dalle carte 46.6
+  limite unità: caserme/partita 6.1, unità perse per eccesso 0.8, acquisti bloccati per mancanza di spazio 127.6
+  specchio, bloccate al tetto: Rusher 1% | Aviazione 14% | Economista 82% | Tartaruga 91% | Contrattacco 53%
+  vince quando il Contrattacco è in partita, contro quando non c'è:
+    Rusher       49.7% con  |  63.3% senza
+    Aviazione    29.0% con  |  20.0% senza
+    Economista   43.3% con  |  38.3% senza
+    Tartaruga     6.7% con  |   8.0% senza
+  partite con Rusher e Contrattacco insieme (300): Rusher 49.7%, Contrattacco 33.0%
+

@@ -16,3 +16,5 @@ __pycache__/
 .vscode/
 *.iml
 .DS_Store
+# Cache del simulatore
+simulazione/wp_cache_*.pkl
