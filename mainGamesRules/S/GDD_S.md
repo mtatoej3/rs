@@ -1,6 +1,6 @@
 # GDD – Regole di Guerra · Profilo S
 
-> **Versione:** 2.0-S – versione del GDD con le regole della variante S. Il GDD di riferimento `GDD_regole_guerra.md` resta invariato.
+> **Versione:** 2.0-S – versione del GDD con le regole della variante S. Il GDD di riferimento è `../GDD_ufficiale.md`.
 > **Stack:** React + TypeScript · Java Spring Boot · PostgreSQL su Supabase · grafica 3D con forme geometriche semplici
 > **Stato:** proposta da confermare. Le regole di gioco uniscono il prototipo da tavolo e la configurazione S di `simulazione/VARIANTI.md`. I punti ancora aperti sono raccolti nella Parte 15.
 
@@ -557,7 +557,8 @@ Monorepo, un unico `git`:
 
 ```
 rs/
-├── progettazione/            # GDD, immagini di riferimento
+├── mainGamesRules/           # GDD ufficiale, varianti, idee e sommario globale
+├── progettazione/            # immagini di riferimento
 ├── simulazione/              # sim.py e risultati (oracolo di bilanciamento)
 ├── scarto/                   # idee scartate
 ├── backend/

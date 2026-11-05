@@ -7,36 +7,7 @@ Una strategia bilanciata vince circa il **33%**.
 
 ---
 
-## Registro delle idee
-Ogni idea ha un ID, un grado e una versione da cui parte. Il registro si aggiorna sul ramo base, non sui rami `idea/`.
-
-| ID | Grado | Idea | Parte da | Stato | Ramo o etichetta | Risultati | Decisione |
-|---|---|---|---|---|---|---|---|
-| I-001 | Grande | Dadi netti: lancio simultaneo, conta la differenza di Boom | S | Scartata | `scartata/I-001` | `risultati_v10_S_dadi_netti.txt` | Rusher più forte, Contrattacco più debole, stalli uguali |
-| I-002 | Grande | Dado per unità e somma contro somma | S | Proposta | `idea/dadi-somma` | – | Da decidere: costo per il vincitore, dado dell'aereo |
-| I-003 | Grande | Dadi classici alla Risiko, solo negli scontri | S | Proposta | – | – | Da valutare dopo I-002 |
-| I-004 | Media | Test bot bravo contro bot scarso, per misurare il peso del ragionamento | S | Proposta | – | – | – |
-| I-005 | Media | Regola di fine partita per le partite bloccate | S | Proposta | – | – | – |
-| I-006 | Media | Premio alla difesa per rendere giocabile la Tartaruga | S | Proposta | – | – | – |
-| I-007 | Grande | Economia più sviluppata: partire dalle scelte del giocatore | S | Proposta | – | – | Dopo la decisione sugli scontri |
-| I-008 | Piccola | Casetta a 250 soldi in E2 | S | Proposta | – | – | – |
-| I-009 | Piccola | Massimo fisso alla mano di carte | S | Proposta | – | – | – |
-
-**Gradi**
-- **Piccola:** cambia un numero. Non serve un ramo: si prova come variante di `sim.py`.
-- **Media:** cambia o aggiunge una regola. Ha un ramo `idea/`.
-- **Grande:** cambia un sistema intero, come scontri o economia. Ha un ramo `idea/` e tocca GDD, simulatore e risultati.
-
-**Stati:** proposta, in prova, adottata, scartata.
-
-**Percorso**
-1. Si registra l'idea con ID, grado e base.
-2. Si apre il ramo dalla sua base, se il grado lo richiede.
-3. Si modificano GDD e simulatore nel ramo e si salvano i risultati.
-4. Si decide e si aggiorna il registro con il motivo.
-5. Se è adottata, si unisce alla base. Se è scartata, si mette l'etichetta `scartata/I-xxx` e si chiude il ramo.
-
-**Rami:** `main` contiene solo le regole approvate; `variante/...` è una configurazione completa da cui partire; `idea/...` è una singola modifica. Il GDD ufficiale non si tocca finché un'idea non è adottata.
+**Sommario delle idee e delle versioni:** `mainGamesRules/SOMMARIO.md`. Questo file resta il registro tecnico delle simulazioni.
 
 ---
 

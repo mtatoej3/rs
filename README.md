@@ -1,12 +1,13 @@
 # Regole di Guerra
 
 Videogioco web multiplayer a fasi simultanee e segrete. Il design è in
-[progettazione/GDD_regole_guerra.md](progettazione/GDD_regole_guerra.md).
+[mainGamesRules/GDD_ufficiale.md](mainGamesRules/GDD_ufficiale.md).
 
 ## Struttura
 | Cartella | Contenuto |
 |---|---|
-| `progettazione/` | GDD e immagini di riferimento |
+| `mainGamesRules/` | GDD ufficiale, varianti, idee e sommario globale |
+| `progettazione/` | Immagini di riferimento |
 | `simulazione/` | `sim.py` e risultati (oracolo di bilanciamento) |
 | `scarto/` | idee scartate |
 | `backend/` | `rg-engine` (dominio puro), `rg-server` (Spring Boot), `rg-sim-cli` |
